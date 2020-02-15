@@ -1,0 +1,7 @@
+division
+11.0 = FBS
+12.0 = FCS
+2.0 = II
+3.0 = III
+
+can remove ".0" does change anything

@@ -1,0 +1,13 @@
+conf_id
+-1 = ALL TEAMS
+823 = AAC
+821 = ACC
+25354 = Big 12
+827 = Big Ten
+24312 = C-USA
+99001 = FBS Independent
+875 = MAC
+5486 = Mountain West
+905 = Pac-12
+911 = SEC
+818 = Sun Belt

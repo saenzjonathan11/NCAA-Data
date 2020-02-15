@@ -1,0 +1,11 @@
+/team/inst_team_list?
+/team/schedule_list?
+/rankings?
+/active_career_leaders/show_summary_from_rankings?
+
+academic_year
+conf_id
+division
+sport_code
+
+/team/schoolCode/?utf8=✓&year_id=&sport_id=&commit=Submit&org_sport_name=&org_id=
