@@ -6,26 +6,20 @@ from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import sys
 
-chrome_options = Options()
-chrome_options.add_argument('--headless')
-driver = webdriver.Chrome(executable_path='../chromedriver.exe', options=chrome_options)
-
 sportCode = "MFB" # football sports code
 division = str(12) # 11 is FBS division, 12 is FCB division
-url = 'https://stats.ncaa.org/team/inst_team_list?sport_code=MFB&division=11'
-#https://stats.ncaa.org/team/inst_team_list?sport_code=MFB&division=12
-# url = "https://stats.ncaa.org/team/inst_team_list?sport_code=" + sportCode + "&division=" + division # correct for this file
+url = "https://stats.ncaa.org/team/inst_team_list?sport_code=" + sportCode + "&division=" + division
 
-
-# data for seasons for football
+# dates for the seasons for football from 2019-20 to 1869-70
 dates = []
-for startYear in range(2019,1800, -1):
+for startYear in range(2019,1868, -1):
   strStartYear = str(startYear)
   last2num = str(startYear % 100 + 1)
   if len(last2num) == 1:
     last2num = '0' + last2num
   dates.append(str(startYear) + '-' + str(last2num))
 
+# get 3 columns with all teams page url in "division" conference
 page = requests.get(url)
 soup = BeautifulSoup(page.text, 'lxml')
 tableColumns = soup.find_all('table', {'width': "100%"})
@@ -37,10 +31,12 @@ driver = webdriver.Chrome('../chromedriver.exe', options=options)  # Optional ar
 driver.get(url)
 
 with open('../csv/conferencesWithYears/FCSWithYears.csv', 'w', newline='') as csvfile:
+  # add header to csv
   fieldnames = ['schoolID', 'game_sport_year_ctl_id', 'org_id', 'schoolName', 'schoolStatsURL', 'rdStatsURL'] + dates
   writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
   writer.writerow(fieldnames)
-  i = 0
+
+  # parse urls and get id value for all the perious seasons for each team
   for column in tableColumns:
     tdTags = column.find_all('td')
     for tdTag in tdTags:
@@ -54,7 +50,7 @@ with open('../csv/conferencesWithYears/FCSWithYears.csv', 'w', newline='') as cs
       schoolID = rdPathSeg[len(rdPathSeg)-1]
 
       driver.get('https://stats.ncaa.org/teams/' + schoolID)
-      time.sleep(3)
+      time.sleep(2.5)
       optionYears = driver.find_element_by_id('year_list').get_attribute('innerHTML')
       soup = BeautifulSoup(optionYears, 'lxml')
       yearValues = [] 
@@ -66,8 +62,5 @@ with open('../csv/conferencesWithYears/FCSWithYears.csv', 'w', newline='') as cs
 
       rowData = [schoolID, teamYearID, orgID, schoolName, schoolStatsURL, rdStatsURL] + yearValues
       writer.writerow(rowData)
-
-      i = i + 1
-      print(i)
 csvfile.close()
-print("total teams code scraped: " + str(i))
+driver.close()
